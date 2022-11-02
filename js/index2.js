@@ -29,9 +29,9 @@ const monsterList = [
 // DOM
 let wrongLettersHTML = document.querySelector('.word__wrong'); // visa felgissade ord här
 const wordResult = document.querySelector('.word__result'); // visa ord här
-const restartButton = document.querySelector('.restart__button'); // knapp för att starta om spelet
-const timerButton = document.querySelector('.timer__button'); // starta timer knapp
-const gameResultText = document.querySelector('.word__gameResult'); // visa game over text
+const restartButton = document.querySelector('.button__restart'); // knapp för att starta om spelet
+const timerButton = document.querySelector('.button__starttimer'); // starta timer knapp
+const gameResultText = document.querySelector('.word__gameresult'); // visa game over text
 const countdownTimer = document.querySelector('.word__countdown'); // visar timer
 
 // Variabler
@@ -40,6 +40,8 @@ let answer = ''; // ordet man ska gissa
 let wrongGuessedLetters = []; // ändrade till array
 let playerScore = 0; // räknar upp vid varje rätt gissning
 let gameActive = false;
+let timer;
+let timeLeft = 60; // seconds
 
 // randomWord(); // kalla på funktion som slumpar fram ordet att gissa
 
@@ -159,7 +161,7 @@ function restartGame() {
   gameResultText.classList.add('hidden');
   wrongLettersHTML.classList.remove('hidden');
   // randomWord(answer);
-  timeLeft = 10;
+  timeLeft = 60;
   startTimer();
 }
 
@@ -171,9 +173,6 @@ function gameWon() {
   gameResultText.textContent = 'You Win!';
   clearInterval(timer);
 }
-
-let timer;
-let timeLeft = 10; // seconds
 
 function updateTimer() {
   timeLeft = timeLeft - 1;

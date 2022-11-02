@@ -12,6 +12,7 @@ body {
   display: flex;
   justify-content: center;
   background-color: #7349ac;
+  font-family: 'Eater', cursive;
 }
 
 .letters {
