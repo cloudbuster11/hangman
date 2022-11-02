@@ -2,8 +2,8 @@
 
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+  /* margin: 0;
+  padding: 0; */
 }
 
 body {
@@ -13,6 +13,7 @@ body {
   justify-content: center;
   background-color: #7349ac;
 }
+
 .letters {
   font-family: 'Eater', cursive;
   font-size: 3em;
@@ -57,22 +58,36 @@ body {
 }
 
 .word__container {
-  width: 860px;
+  width: 400px;
+  height: 569px;
   display: flex;
   align-items: center;
+  justify-content: center;
   flex-direction: column;
 }
 
 .word__result {
-  font-size: 5rem;
+  font-size: 4rem;
   display: flex;
-  gap: 1rem;
+  letter-spacing: 1rem;
   text-align: center;
-  margin-bottom: 2rem;
 }
 
-.restart__button {
-  display: none;
+p {
+  margin: 0;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.4s;
+}
+
+button:hover {
+  background-color: #fa6701;
 }
 
 .ghost {
@@ -245,4 +260,7 @@ body {
 }
 
 @media only screen and (max-width: 768px) {
+  .word__container {
+    height: 300px;
+  }
 }

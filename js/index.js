@@ -1,10 +1,3 @@
-// För att toggla SVG:en
-// document.querySelector('figure').classList.add('scaffold');
-// document.querySelector('figure').classList.add('head');
-// document.querySelector('figure').classList.add('body');
-// document.querySelector('figure').classList.add('arms');
-// document.querySelector('figure').classList.add('legs');
-
 // Dom
 const wordContainer = document.querySelector('.word__container');
 const wrongLetters = document.querySelector('.word__wrong');
@@ -71,11 +64,7 @@ function displayCorrectLetter(correctKey) {
   const correctLetterParagraph = document.querySelectorAll('p');
   console.log(correctKey);
   for (let i = 0; i < correctLetterParagraph.length; i++) {
-    if (playerScore === word.length) {
-      console.log('Du vann!!!!');
-    } else if (
-      correctLetterParagraph[i].classList.contains(correctKey)
-    ) {
+    if (correctLetterParagraph[i].classList.contains(correctKey)) {
       correctLetterParagraph[i].textContent = correctKey;
     }
   }
@@ -117,9 +106,9 @@ function restartGame() {
   wordResult.textContent = '';
   wrongLetters.textContent = '';
   wrongGuessedLetters = '';
-  restartButton.style.display = 'none';
   playerScore = 5;
   playerWinScore = 0;
+  restartButton.style.display = 'none';
   gameoverText.classList.add('hidden');
   wrongLetters.classList.remove('hidden');
   displayWord(word);
@@ -128,8 +117,6 @@ function restartGame() {
 /*
 1. Skapa du vann funktion
 2. Array med ord och slumpa fram ord
-
 3. timer
 4. style
-
 */
