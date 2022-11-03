@@ -69,7 +69,11 @@ function randomWord() {
 }
 
 function comparePressedKey(key) {
-  if (playerScore == answer.length - 1) {
+  if (
+    playerScore == answer.length - 1 &&
+    !displayWord.textContent.includes(key) &&
+    answer.includes(key)
+  ) {
     displayCorrectLetter(key);
     gameWon();
   } else if (
