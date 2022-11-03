@@ -1,38 +1,44 @@
 /*
-'keypress' används inte längre. Ändrade till 'keydown'
-
-ÄNDRADE NAMN:
-* wrongLetters = wrongLettersHTML
-* playerScore = mistakes
-* word = answer
-* playerWinScore = playerScore
-
 KVAR ATT GÖRA:
-* styla 
-
-* Lägga till en hint vad man ska gissa
-* ta bort kommentarer & console loggar
-
+* clear funktion?
+* ta bort kommentarer
 */
 
-//array of words to be randomized for game:
-const monsterList = [
+const monsterArray = [
   'zombie',
   'vampire',
   'witch',
   'ghost',
   'monster',
-  'dracula',
+  'devil',
   'demon',
 ];
 
 // DOM
-let wrongLettersHTML = document.querySelector('.word__wrong'); // visa felgissade ord här
-const wordResult = document.querySelector('.word__result'); // visa ord här
+const displayWrongLetters = document.querySelector(
+  '.game__wrongletters'
+); // visa felgissade ord här
+const displayWord = document.querySelector('.game__displayword'); // visa ord här
 const restartButton = document.querySelector('.button__restart'); // knapp för att starta om spelet
-const timerButton = document.querySelector('.button__starttimer'); // starta timer knapp
-const gameResultText = document.querySelector('.word__gameresult'); // visa game over text
-const countdownTimer = document.querySelector('.word__countdown'); // visar timer
+const startButton = document.querySelector('.button__start'); // starta timer knapp
+const gameResult = document.querySelector('.game__result'); // visa game over text
+const countdownTimer = document.querySelector('.game__countdown'); // visar timer
+const hangman = document.querySelector('figure');
+const hint = document.querySelector('.game__hint');
+
+const figure = {
+  figureParts: ['scaffold', 'head', 'body', 'arms', 'legs'],
+  show: function () {
+    this.figureParts.forEach((part) => {
+      hangman.classList.add(part);
+    });
+  },
+  clear: function () {
+    this.figureParts.forEach((part) => {
+      hangman.classList.remove(part);
+    });
+  },
+};
 
 // Variabler
 let mistakes = 0; // ändrade 5 to 0, räknar upp vid varje felgissning
@@ -43,23 +49,28 @@ let gameActive = false;
 let timer;
 let timeLeft = 60; // seconds
 
-// randomWord(); // kalla på funktion som slumpar fram ordet att gissa
+figure.show();
 
 // Eventlistener som lyssnar efter tangentryck
-addEventListener('keydown', (event) => {
-  comparePressedKey(event.key); //call function to compare this keydown event with existing key in generated random word from array
+addEventListener('keyup', (event) => {
+  textInput = event.key.match(/^[a-zåäö]$/i);
+  if (textInput === null) {
+    return;
+  } else {
+    comparePressedKey(textInput); //call function to compare this keyup event with existing key in generated random word from array
+  }
 });
 
 //eventlistener startar timer
-timerButton.addEventListener('click', startTimer);
+startButton.addEventListener('click', startTimer);
 
 //eventlistener för restart btn som startar om spelet
 restartButton.addEventListener('click', restartGame);
 
-// Slumpa fram ord från monsterList
+// Slumpa fram ord från monsterArray
 function randomWord() {
   answer =
-    monsterList[Math.floor(Math.random() * monsterList.length)];
+    monsterArray[Math.floor(Math.random() * monsterArray.length)];
 
   // Loopar över answer och lägger till en P-tag(-) och class="bokstaven".
   for (let i = 0; i < answer.length; i++) {
@@ -67,46 +78,38 @@ function randomWord() {
     const node = document.createTextNode(' _ ');
     paragraph.classList.add(answer[i]);
     paragraph.appendChild(node);
-    wordResult.appendChild(paragraph);
+    displayWord.appendChild(paragraph);
   }
 }
 
 // Jämför inmatad bokstaven med ordet.
 function comparePressedKey(key) {
-  //console.log(`Du tryckte på tangenten ${key}`);
   if (playerScore == answer.length - 1) {
-    console.log('Du vann!');
     displayCorrectLetter(key);
     gameWon();
   } else if (
     answer.includes(key) &&
-    !wordResult.textContent.includes(key)
+    !displayWord.textContent.includes(key)
   ) {
-    console.log(`JA. Bokstaven ${key} finns i ordet.`);
     playerScore++;
-    //console.log(playerScore)
-    displayCorrectLetter(key); // lägg till och visa tryct key
+    displayCorrectLetter(key); // lägg till och visa tryckt key
   } else if (
     (gameActive === true && wrongGuessedLetters.includes(key)) ||
-    (gameActive === true && wordResult.textContent.includes(key))
+    (gameActive === true && displayWord.textContent.includes(key))
   ) {
-    alert('Du har redan gissat denna bokstav'); //ändrade till alert
+    alert(`You have already guessed the letter: ${key}`); //ändrade till alert
   } else if (gameActive === true) {
-    console.log(`NEJ. Bokstaven ${key} finns EJ i ordet`);
     displayHangman(); // Funktionen visar hangman SVG för varje fel
     wrongGuessedLetters += ` ${key}`; // lägg till felgissad key till arrayen wrongGuessedLetters
-    console.log(`felgissade: ${wrongGuessedLetters}`);
+    displayWrongLetters.textContent = wrongGuessedLetters;
   }
 
   // Visa arrayen wrongGuessedLetters med felgissade keys
-  wrongLettersHTML.textContent =
-    'Gissade bokstäver: ' + wrongGuessedLetters;
 }
 
 // Om du gissar rätt, visar rätt bokstav.
 function displayCorrectLetter(correctKey) {
   const correctLetterParagraph = document.querySelectorAll('p');
-  // console.log(correctKey);
   for (let i = 0; i < correctLetterParagraph.length; i++) {
     if (correctLetterParagraph[i].classList.contains(correctKey)) {
       correctLetterParagraph[i].textContent = correctKey;
@@ -116,7 +119,6 @@ function displayCorrectLetter(correctKey) {
 
 function displayHangman() {
   mistakes++; //Ändrade -- till ++
-  console.log(`Spelare misstag: ${mistakes}`);
   if (mistakes === 1) {
     document.querySelector('figure').classList.add('scaffold');
   } else if (mistakes === 2) {
@@ -133,45 +135,50 @@ function displayHangman() {
 
 function gameOver() {
   gameActive = false;
-  console.log('Game Over');
   document.body.style.backgroundColor = '#555';
-  wordResult.textContent = answer;
-  restartButton.classList.remove('hidden');
-  wrongLettersHTML.classList.add('hidden');
-  gameResultText.classList.remove('hidden');
-  gameResultText.textContent = 'Game Over';
-  // Test
+  displayWord.textContent = answer;
+  gameResult.classList.add('lost');
+  gameResult.textContent = 'Game Over';
   clearInterval(timer);
+  figure.show();
+  removeHiddenClass(restartButton, gameResult);
+  addHiddenClass(displayWrongLetters, hint);
 }
 
 function restartGame() {
   gameActive = false;
-  document.querySelector('figure').classList.remove('scaffold');
-  document.querySelector('figure').classList.remove('head');
-  document.querySelector('figure').classList.remove('body');
-  document.querySelector('figure').classList.remove('arms');
-  document.querySelector('figure').classList.remove('legs');
   document.body.style.backgroundColor = '#7349ac';
-  wordResult.textContent = '';
-  wrongLettersHTML.textContent = '';
+  displayWord.textContent = '';
+  displayWrongLetters.textContent = '';
   wrongGuessedLetters = '';
-  restartButton.classList.add('hidden');
   mistakes = 0;
   playerScore = 0;
-  gameResultText.classList.add('hidden');
-  wrongLettersHTML.classList.remove('hidden');
-  // randomWord(answer);
   timeLeft = 60;
+  removeHiddenClass(displayWrongLetters, hint);
+  addHiddenClass(restartButton, gameResult);
+  figure.clear();
   startTimer();
 }
 
 function gameWon() {
   gameActive = false;
-  restartButton.classList.remove('hidden');
-  wrongLettersHTML.classList.add('hidden');
-  gameResultText.classList.remove('hidden');
-  gameResultText.textContent = 'You Win!';
+  gameResult.classList.remove('lost');
+  gameResult.textContent = 'You Win!';
   clearInterval(timer);
+  removeHiddenClass(restartButton, gameResult);
+  addHiddenClass(displayWrongLetters, hint);
+}
+
+function removeHiddenClass(...className) {
+  for (let i = 0; i < className.length; i++) {
+    className[i].classList.remove('hidden');
+  }
+}
+
+function addHiddenClass(...className) {
+  for (let i = 0; i < className.length; i++) {
+    className[i].classList.add('hidden');
+  }
 }
 
 function updateTimer() {
@@ -187,5 +194,9 @@ function startTimer() {
   timer = setInterval(updateTimer, 1000);
   updateTimer();
   randomWord(answer);
-  timerButton.classList.add('hidden');
+  figure.clear();
+  // startButton.classList.add('hidden');
+  addHiddenClass(startButton);
+  removeHiddenClass(hint);
+  // hint.classList.remove('hidden');
 }
