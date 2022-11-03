@@ -1,9 +1,3 @@
-/*
-KVAR ATT GÖRA:
-* clear funktion?
-* ta bort kommentarer
-*/
-
 const monsterArray = [
   'zombie',
   'vampire',
@@ -14,15 +8,14 @@ const monsterArray = [
   'demon',
 ];
 
-// DOM
 const displayWrongLetters = document.querySelector(
   '.game__wrongletters'
-); // visa felgissade ord här
-const displayWord = document.querySelector('.game__displayword'); // visa ord här
-const restartButton = document.querySelector('.button__restart'); // knapp för att starta om spelet
-const startButton = document.querySelector('.button__start'); // starta timer knapp
-const gameResult = document.querySelector('.game__result'); // visa game over text
-const countdownTimer = document.querySelector('.game__countdown'); // visar timer
+);
+const displayWord = document.querySelector('.game__displayword');
+const restartButton = document.querySelector('.button__restart');
+const startButton = document.querySelector('.button__start');
+const gameResult = document.querySelector('.game__result');
+const countdownTimer = document.querySelector('.game__countdown');
 const hangman = document.querySelector('figure');
 const hint = document.querySelector('.game__hint');
 
@@ -40,39 +33,32 @@ const figure = {
   },
 };
 
-// Variabler
-let mistakes = 0; // ändrade 5 to 0, räknar upp vid varje felgissning
-let answer = ''; // ordet man ska gissa
-let wrongGuessedLetters = []; // ändrade till array
-let playerScore = 0; // räknar upp vid varje rätt gissning
+let mistakes = 0;
+let answer = '';
+let wrongGuessedLetters = [];
+let playerScore = 0;
 let gameActive = false;
 let timer;
-let timeLeft = 60; // seconds
+let timeLeft = 60;
 
 figure.show();
 
-// Eventlistener som lyssnar efter tangentryck
 addEventListener('keyup', (event) => {
   textInput = event.key.match(/^[a-zåäö]$/i);
   if (textInput === null) {
     return;
   } else {
-    comparePressedKey(textInput); //call function to compare this keyup event with existing key in generated random word from array
+    comparePressedKey(textInput);
   }
 });
 
-//eventlistener startar timer
 startButton.addEventListener('click', startTimer);
 
-//eventlistener för restart btn som startar om spelet
 restartButton.addEventListener('click', restartGame);
 
-// Slumpa fram ord från monsterArray
 function randomWord() {
   answer =
     monsterArray[Math.floor(Math.random() * monsterArray.length)];
-
-  // Loopar över answer och lägger till en P-tag(-) och class="bokstaven".
   for (let i = 0; i < answer.length; i++) {
     const paragraph = document.createElement('p');
     const node = document.createTextNode(' _ ');
@@ -82,7 +68,6 @@ function randomWord() {
   }
 }
 
-// Jämför inmatad bokstaven med ordet.
 function comparePressedKey(key) {
   if (playerScore == answer.length - 1) {
     displayCorrectLetter(key);
@@ -92,22 +77,19 @@ function comparePressedKey(key) {
     !displayWord.textContent.includes(key)
   ) {
     playerScore++;
-    displayCorrectLetter(key); // lägg till och visa tryckt key
+    displayCorrectLetter(key);
   } else if (
     (gameActive === true && wrongGuessedLetters.includes(key)) ||
     (gameActive === true && displayWord.textContent.includes(key))
   ) {
-    alert(`You have already guessed the letter: ${key}`); //ändrade till alert
+    alert(`You have already guessed the letter: ${key}`);
   } else if (gameActive === true) {
-    displayHangman(); // Funktionen visar hangman SVG för varje fel
-    wrongGuessedLetters += ` ${key}`; // lägg till felgissad key till arrayen wrongGuessedLetters
+    displayHangman();
+    wrongGuessedLetters += ` ${key}`;
     displayWrongLetters.textContent = wrongGuessedLetters;
   }
-
-  // Visa arrayen wrongGuessedLetters med felgissade keys
 }
 
-// Om du gissar rätt, visar rätt bokstav.
 function displayCorrectLetter(correctKey) {
   const correctLetterParagraph = document.querySelectorAll('p');
   for (let i = 0; i < correctLetterParagraph.length; i++) {
@@ -118,7 +100,7 @@ function displayCorrectLetter(correctKey) {
 }
 
 function displayHangman() {
-  mistakes++; //Ändrade -- till ++
+  mistakes++;
   if (mistakes === 1) {
     document.querySelector('figure').classList.add('scaffold');
   } else if (mistakes === 2) {
@@ -129,7 +111,7 @@ function displayHangman() {
     document.querySelector('figure').classList.add('arms');
   } else if (mistakes === 5) {
     document.querySelector('figure').classList.add('legs');
-    gameOver(); // När man nått 5 misstag är spelet slut
+    gameOver();
   }
 }
 
@@ -195,8 +177,6 @@ function startTimer() {
   updateTimer();
   randomWord(answer);
   figure.clear();
-  // startButton.classList.add('hidden');
   addHiddenClass(startButton);
   removeHiddenClass(hint);
-  // hint.classList.remove('hidden');
 }
